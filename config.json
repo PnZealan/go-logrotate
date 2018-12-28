@@ -1,0 +1,25 @@
+{
+    "filePathList":{
+        "/root/go/test":{
+            "size": 0,
+            "copytruncate": true,
+            "pidPath": "",
+            "compress": true,
+            "dest": "/root/go/test",
+            "lastModf": 0,
+            "specTime": "10 * * * * *"
+        },
+        "/root/go/test.log":{
+            "size": 0,
+            "copytruncate": true,
+            "pidPath": "",
+            "compress": true,
+            "dest": "/root/go",
+            "lastModf": 0,
+            "specTime": "0 0 4 * * *"
+        }
+    },
+    "excludeFile":[
+        "error.log"
+    ]
+}
