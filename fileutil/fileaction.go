@@ -94,7 +94,7 @@ func FileRotate(fileName string, dest string, pidPath string, compress bool) err
 	// 		pid2Reload(pidPath)
 	// 		deleteFile(newName)
 	// 	}
-
+	log.Printf("fileLogRotate-->%v, dest:%v, compress:%v \n", fileName, dest, compress)
 	return nil
 }
 
@@ -119,6 +119,7 @@ func FileCopyTruncate(fileName string, dest string, compress bool) error {
 		log.Println(err)
 		return err
 	}
+	log.Printf("fileCopyTruncate-->%v, dest:%v, compress:%v \n", fileName, dest, compress)
 
 	return nil
 }
