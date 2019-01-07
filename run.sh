@@ -12,6 +12,7 @@ function killProsess() {
 
 function start() {
         echo "start go-cron ..."
+        `echo "====================================" >> ./cron.log`
         `./logrotate &>> ./cron.log &`
 }
 
