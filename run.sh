@@ -16,7 +16,7 @@ function start() {
 }
 
 function stop() {
-        echo "stop go-cron ..."
+        echo "stop go-logrotate ..."
         killProsess "logrotate"
 }
 
