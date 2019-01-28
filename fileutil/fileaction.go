@@ -11,11 +11,12 @@ import (
 	"path"
 	"strings"
 	"time"
+
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 )
 
 // fileName is abs path !
-func fileCompress(fileName string) error {
+func fileCompress(fileName string) error, string {
 	cmpName := fileName + ".gz"
 	// create compressed file
 	outputFile, err := os.Create(cmpName)
@@ -53,11 +54,11 @@ func fileCompress(fileName string) error {
 	}
 
 	log.Println("Compressed file :", cmpName)
-	transfer(fileName)
-	return nil
+	deleteFile(fileName)
+	return nil, cmpName
 }
 
-// FileRotate ,fileName, dest, pidPath are abs path !, when dest is null, truncate file
+// FileRotate ,fileName, dest, pidPath are abs path !, when dest is nil, truncate file
 func FileRotate(fileName string, dest string, pidPath string, compress bool) error {
 	t := time.Now().Format("2006-01-02")
 
@@ -76,8 +77,13 @@ func FileRotate(fileName string, dest string, pidPath string, compress bool) err
 		}
 		// newName abs path
 		if compress == true {
-			if err := fileCompress(newName); err != nil {
+			cmpFile, err := fileCompress(newName)
+			 if err != nil {
 				log.Println(err)
+				return err
+			}
+			err = transfer(cmpFile)
+			if err != nil {
 				return err
 			}
 		}
@@ -110,8 +116,13 @@ func FileCopyTruncate(fileName string, dest string, compress bool) error {
 			return err
 		}
 		if compress == true {
-			if err := fileCompress(newName); err != nil {
+			cmpFile, err := fileCompress(newName)
+			 if err != nil {
 				log.Println(err)
+				return err
+			}
+			err = transfer(cmpFile)
+			if err != nil {
 				return err
 			}
 		}
@@ -188,7 +199,7 @@ func fileCopy(srcName string, destName string) error {
 	return nil
 }
 
-//parmars: ENDPOINT,AK,AKSECRET,BKNAME,OBNAME
+//param: ENDPOINT,AK,AKSECRET,BKNAME,OBNAME
 func transfer(fileName string) error {
 	endpoint := os.Getenv("ENDPOINT")
 	ak := os.Getenv("AK")
@@ -203,15 +214,19 @@ func transfer(fileName string) error {
 		return err
 	}
 
-	//get oss bk 
+	//get oss bk
 	bucket, err := client.Bucket(bkname)
 	if err != nil {
 		log.Println("get oss bk error")
 		return err
 	}
 
-	//set partSize 1024* 1024, 3 goroutines for upload, enable check back 
-	err = bucket.UploadFile(obname, fileName, 100*1024, oss.Routines(3), oss.Checkpoint(true, ""))
-	
+	//set partSize 1024* 1024, 3 goroutines for upload, enable check back
+	err = bucket.UploadFile(obname, fileName, 1024*1024, oss.Routines(3), oss.Checkpoint(true, ""))
+	if err != nil {
+		log.Println("upload error")
+		return err
+	}
+	log.Println("upload file: --------->", fileName)
 	return nil
 }
