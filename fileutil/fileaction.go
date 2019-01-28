@@ -56,7 +56,7 @@ func fileCompress(fileName string) error {
 	return nil
 }
 
-// FileRotate fileName, dest, pidPath are abs path !, when dest is null, truncate file
+// FileRotate ,fileName, dest, pidPath are abs path !, when dest is null, truncate file
 func FileRotate(fileName string, dest string, pidPath string, compress bool) error {
 	t := time.Now().Format("2006-01-02")
 

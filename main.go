@@ -40,7 +40,7 @@ func main() {
 	jc := &jsConfig{}
 	js.Load("config.json", jc)
 	c := cron.New()
-	// addfunc to each filepath
+	// addjob to each filepath
 	for k, v := range jc.FilePathList {
 		sj := startJob{jc, k, v}
 		c.AddJob(v.SpecTime, sj)
