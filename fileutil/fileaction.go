@@ -11,6 +11,7 @@ import (
 	"path"
 	"strings"
 	"time"
+	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 )
 
 // fileName is abs path !
@@ -52,7 +53,7 @@ func fileCompress(fileName string) error {
 	}
 
 	log.Println("Compressed file :", cmpName)
-	deleteFile(fileName)
+	transfer(fileName)
 	return nil
 }
 
@@ -184,5 +185,33 @@ func fileCopy(srcName string, destName string) error {
 	if errC != nil {
 		return errC
 	}
+	return nil
+}
+
+//parmars: ENDPOINT,AK,AKSECRET,BKNAME,OBNAME
+func transfer(fileName string) error {
+	endpoint := os.Getenv("ENDPOINT")
+	ak := os.Getenv("AK")
+	aksecret := os.Getenv("AKSECRET")
+	bkname := os.Getenv("BKNAME")
+	obname := os.Getenv("OBNAME")
+
+	//get oss client instance
+	client, err := oss.New(endpoint, ak, aksecret)
+	if err != nil {
+		log.Println("get oss client instances error ")
+		return err
+	}
+
+	//get oss bk 
+	bucket, err := client.Bucket(bkname)
+	if err != nil {
+		log.Println("get oss bk error")
+		return err
+	}
+
+	//set partSize 1024* 1024, 3 goroutines for upload, enable check back 
+	err = bucket.UploadFile(obname, fileName, 100*1024, oss.Routines(3), oss.Checkpoint(true, ""))
+	
 	return nil
 }
