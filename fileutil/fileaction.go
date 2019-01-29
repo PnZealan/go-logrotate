@@ -118,6 +118,10 @@ func FileCopyTruncate(fileName string, dest string, compress bool) error {
 			log.Println(err)
 			return err
 		}
+		if err := fileTruncate(fileName); err != nil {
+			log.Println(err)
+			return err
+		}
 		if compress == true {
 			cmpFile, err := fileCompress(newName)
 			if err != nil {
@@ -132,10 +136,11 @@ func FileCopyTruncate(fileName string, dest string, compress bool) error {
 			}
 		}
 
-	}
-	if err := fileTruncate(fileName); err != nil {
-		log.Println(err)
-		return err
+	}else {
+		if err := fileTruncate(fileName); err != nil {
+			log.Println(err)
+			return err
+		}
 	}
 	log.Printf("fileCopyTruncate-->%v, dest:%v, compress:%t \n", fileName, dest, compress)
 
@@ -212,7 +217,7 @@ func osstransfer(fileName string, dest string) error {
 	ak := os.Getenv("AK")
 	aksecret := os.Getenv("AKSECRET")
 
-	dest = strings.Trim(dest, "oss://")
+	dest = strings.Trim(dest, "oss:/")
 	destslice := strings.Split(dest, "/")
 
 	bkname := destslice[0]
@@ -244,7 +249,7 @@ func osstransfer(fileName string, dest string) error {
 
 //oss://logs-td/server-log/
 func destUtil(fileName string, dest string, t string) (string, bool) {
-	if strings.HasPrefix(fileName, "oss://") {
+	if strings.HasPrefix(fileName, "oss:"){
 		newName := fileName + "-" + t
 		return newName, true
 	}

@@ -14,9 +14,9 @@
             "copytruncate": true,
             "pidPath": "",
             "compress": true,
-            "dest": "/root/go",
+            "dest": "oss://logs-td/server-log/",
             "lastModf": 0,
-            "specTime": "0 0 4 * * *"
+            "specTime": "20 * * * * *"
         }
     },
     "excludeFile":[
