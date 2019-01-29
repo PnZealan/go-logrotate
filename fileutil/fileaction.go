@@ -85,7 +85,7 @@ func FileRotate(fileName string, dest string, pidPath string, compress bool) err
 		}
 
 		if flag == true {
-			err = osstransfer(cmpFile, dest)
+			err := osstransfer(cmpFile, dest)
 			if err != nil {
 				return err
 			}
@@ -128,7 +128,7 @@ func FileCopyTruncate(fileName string, dest string, compress bool) error {
 		}
 
 		if flag == true {
-			err = osstransfer(cmpFile, dest)
+			err := osstransfer(cmpFile, dest)
 			if err != nil {
 				return err
 			}
