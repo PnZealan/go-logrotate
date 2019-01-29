@@ -16,12 +16,12 @@ import (
 )
 
 // fileName is abs path !
-func fileCompress(fileName string) error, string {
+func fileCompress(fileName string) (string, error) {
 	cmpName := fileName + ".gz"
 	// create compressed file
 	outputFile, err := os.Create(cmpName)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	//gzip writer
@@ -30,7 +30,7 @@ func fileCompress(fileName string) error, string {
 
 	file, err := os.Open(fileName)
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer file.Close()
 
@@ -43,27 +43,27 @@ func fileCompress(fileName string) error, string {
 			if err == io.EOF {
 				break
 			} else {
-				return err
+				return "", err
 			}
 		}
 		// write bytes slice
 		_, errWrite := gzipWriter.Write(data)
 		if errWrite != nil {
-			return errWrite
+			return "", errWrite
 		}
 	}
 
 	log.Println("Compressed file :", cmpName)
 	deleteFile(fileName)
-	return nil, cmpName
+	return cmpName, nil
 }
 
 // FileRotate ,fileName, dest, pidPath are abs path !, when dest is nil, truncate file
 func FileRotate(fileName string, dest string, pidPath string, compress bool) error {
 	t := time.Now().Format("2006-01-02")
-
+	//TODO
 	if dest != "" {
-		newName := path.Join(dest, path.Base(fileName)) + "-" + string(t)
+		newName, flag := destUtil(fileName, dest, t)
 		err := os.Rename(fileName, newName)
 		if err != nil {
 			log.Println("file rename err:-----------<", err)
@@ -71,22 +71,26 @@ func FileRotate(fileName string, dest string, pidPath string, compress bool) err
 		}
 		if err := pid2Reload(pidPath); err != nil {
 			log.Println("pid reload err:-----------<", err)
-			// recover the file name
+			// recover the file name when error occurred
 			os.Rename(newName, fileName)
 			return err
 		}
 		// newName abs path
 		if compress == true {
 			cmpFile, err := fileCompress(newName)
-			 if err != nil {
+			if err != nil {
 				log.Println(err)
 				return err
 			}
-			err = transfer(cmpFile)
+		}
+
+		if flag == true {
+			err = osstransfer(cmpFile, dest)
 			if err != nil {
 				return err
 			}
 		}
+
 	} else {
 		if err := fileTruncate(fileName); err != nil {
 			log.Println(err)
@@ -110,22 +114,26 @@ func FileCopyTruncate(fileName string, dest string, compress bool) error {
 	t := time.Now().Format("2006-01-02")
 
 	if dest != "" {
-		newName := path.Join(dest, path.Base(fileName)) + "-" + string(t)
+		newName, flag := destUtil(fileName, dest, t)
 		if err := fileCopy(fileName, newName); err != nil {
 			log.Println(err)
 			return err
 		}
 		if compress == true {
 			cmpFile, err := fileCompress(newName)
-			 if err != nil {
+			if err != nil {
 				log.Println(err)
 				return err
 			}
-			err = transfer(cmpFile)
+		}
+
+		if flag == true {
+			err = osstransfer(cmpFile, dest)
 			if err != nil {
 				return err
 			}
 		}
+		
 	}
 	if err := fileTruncate(fileName); err != nil {
 		log.Println(err)
@@ -199,13 +207,18 @@ func fileCopy(srcName string, destName string) error {
 	return nil
 }
 
-//param: ENDPOINT,AK,AKSECRET,BKNAME,OBNAME
-func transfer(fileName string) error {
+//param: ENDPOINT,AK,AKSECRET
+//oss://logs-td/server-log/  bkname, obname
+func osstransfer(fileName string, dest string) error {
 	endpoint := os.Getenv("ENDPOINT")
 	ak := os.Getenv("AK")
 	aksecret := os.Getenv("AKSECRET")
-	bkname := os.Getenv("BKNAME")
-	obname := os.Getenv("OBNAME")
+
+	dest = strings.Trim(dest, "oss://")
+	destslice := strings.Split(dest, "/")
+
+	bkname := destslice[0]
+	obname := destslice[1]
 
 	//get oss client instance
 	client, err := oss.New(endpoint, ak, aksecret)
@@ -229,4 +242,15 @@ func transfer(fileName string) error {
 	}
 	log.Println("upload file: --------->", fileName)
 	return nil
+}
+
+//oss://logs-td/server-log/ 
+func destUtil(fileName string, dest string, t string) (string, bool) {
+	if strings.HasPrefix(fileName, "oss://") {
+		newName = fileName + "-" + t
+		return newName, true
+	}else {
+		newName = path.Join(dest, path.Base(fileName)) + "-" + t
+		return newName, false
+	}
 }
