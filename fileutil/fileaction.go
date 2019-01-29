@@ -223,6 +223,7 @@ func osstransfer(fileName string, dest string) error {
 	bkname := destslice[0]
 	obname := destslice[1]
 
+	fmt.Println(endpoint, ak, aksecret, bkname, obname)
 	//get oss client instance
 	client, err := oss.New(endpoint, ak, aksecret)
 	if err != nil {
