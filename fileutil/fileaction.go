@@ -82,12 +82,11 @@ func FileRotate(fileName string, dest string, pidPath string, compress bool) err
 				log.Println(err)
 				return err
 			}
-		}
-
-		if flag == true {
-			err := osstransfer(cmpFile, dest)
-			if err != nil {
-				return err
+			if flag == true {
+				err := osstransfer(cmpFile, dest)
+				if err != nil {
+					return err
+				}
 			}
 		}
 
@@ -125,15 +124,14 @@ func FileCopyTruncate(fileName string, dest string, compress bool) error {
 				log.Println(err)
 				return err
 			}
-		}
-
-		if flag == true {
-			err := osstransfer(cmpFile, dest)
-			if err != nil {
-				return err
+			if flag == true {
+				err := osstransfer(cmpFile, dest)
+				if err != nil {
+					return err
+				}
 			}
 		}
-		
+
 	}
 	if err := fileTruncate(fileName); err != nil {
 		log.Println(err)
@@ -244,13 +242,13 @@ func osstransfer(fileName string, dest string) error {
 	return nil
 }
 
-//oss://logs-td/server-log/ 
+//oss://logs-td/server-log/
 func destUtil(fileName string, dest string, t string) (string, bool) {
 	if strings.HasPrefix(fileName, "oss://") {
-		newName = fileName + "-" + t
+		newName := fileName + "-" + t
 		return newName, true
-	}else {
-		newName = path.Join(dest, path.Base(fileName)) + "-" + t
-		return newName, false
 	}
+	newName := path.Join(dest, path.Base(fileName)) + "-" + t
+	return newName, false
+
 }
