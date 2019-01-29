@@ -14,7 +14,7 @@
             "copytruncate": true,
             "pidPath": "",
             "compress": true,
-            "dest": "oss://logs-td/server-log/",
+            "dest": "oss://logs-td/server-log/test",
             "lastModf": 0,
             "specTime": "20 * * * * *"
         }

@@ -38,8 +38,8 @@ case "$1" in
                 restart
                 ;;
         * )
-                echo "****************"
+                echo "***********************"
                 echo "start | restart | stop"
-                echo "****************"
+                echo "***********************"
                 ;;
 esac
