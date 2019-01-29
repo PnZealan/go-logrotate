@@ -237,7 +237,6 @@ func osstransfer(fileName string, dest string) error {
 		return err
 	}
 
-	log.Println(obname, fileName)
 	//set partSize 1024* 1024, 3 goroutines for upload, enable check back
 	err = bucket.UploadFile(obname, fileName, 300*1024, oss.Routines(3), oss.Checkpoint(true, ""))
 	if err != nil {
@@ -245,6 +244,7 @@ func osstransfer(fileName string, dest string) error {
 		return err
 	}
 	log.Println("upload file: --------->", fileName)
+	deleteFile(fileName)
 	return nil
 }
 
