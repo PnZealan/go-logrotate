@@ -255,7 +255,7 @@ func destUtil(fileName string, dest string, t string) (string, bool) {
 		return newName, true
 	}
 	newName := path.Join(dest, path.Base(fileName)) + "-" + t
-	log.Println(newName)
+	log.Println(dest)
 	return newName, false
 
 }
