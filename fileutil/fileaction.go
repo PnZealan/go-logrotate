@@ -249,13 +249,13 @@ func osstransfer(fileName string, dest string) error {
 
 //oss://logs-td/server-log/
 func destUtil(fileName string, dest string, t string) (string, bool) {
-	log.Println(fileName)
 	if strings.HasPrefix(fileName, "oss:"){
 		newName := fileName + "-" + t
 		log.Println(newName)
 		return newName, true
 	}
 	newName := path.Join(dest, path.Base(fileName)) + "-" + t
+	log.Println(newName)
 	return newName, false
 
 }
