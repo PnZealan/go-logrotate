@@ -101,7 +101,7 @@ func dirStartRotate(base string, fileList []string, dest string, pidPath string,
 
 func fileStartCopyTruncate(filename string, dest string, compress bool) {
 	if err := fileutil.FileCopyTruncate(filename, dest, compress); err != nil {
-
+		fmt.Println(err)
 	}
 }
 
