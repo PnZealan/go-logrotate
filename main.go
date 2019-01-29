@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"path"
+
 	"github.com/robfig/cron"
 
 	"./fileutil"
@@ -100,7 +101,7 @@ func dirStartRotate(base string, fileList []string, dest string, pidPath string,
 
 func fileStartCopyTruncate(filename string, dest string, compress bool) {
 	if err := fileutil.FileCopyTruncate(filename, dest, compress); err != nil {
-		log.Println(err)
+
 	}
 }
 

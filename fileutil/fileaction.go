@@ -136,7 +136,7 @@ func FileCopyTruncate(fileName string, dest string, compress bool) error {
 			}
 		}
 
-	}else {
+	} else {
 		if err := fileTruncate(fileName); err != nil {
 			log.Println(err)
 			return err
@@ -221,9 +221,8 @@ func osstransfer(fileName string, dest string) error {
 	destslice := strings.Split(dest, "/")
 
 	bkname := destslice[0]
-	obname := destslice[1]
+	obname := path.Join(destslice[1], path.Base(fileName))
 
-	log.Println(endpoint, ak, aksecret, bkname, obname)
 	//get oss client instance
 	client, err := oss.New(endpoint, ak, aksecret)
 	if err != nil {
@@ -238,10 +237,11 @@ func osstransfer(fileName string, dest string) error {
 		return err
 	}
 
+	log.Println(obname, fileName)
 	//set partSize 1024* 1024, 3 goroutines for upload, enable check back
-	err = bucket.UploadFile(obname, fileName, 1024*1024, oss.Routines(3), oss.Checkpoint(true, ""))
+	err = bucket.UploadFile(obname, fileName, 300*1024, oss.Routines(3), oss.Checkpoint(true, ""))
 	if err != nil {
-		log.Println("upload error")
+		log.Println("upload error", err)
 		return err
 	}
 	log.Println("upload file: --------->", fileName)
@@ -250,7 +250,7 @@ func osstransfer(fileName string, dest string) error {
 
 //oss://logs-td/server-log/
 func destUtil(fileName string, dest string, t string) (string, bool) {
-	if strings.HasPrefix(dest, "oss:"){
+	if strings.HasPrefix(dest, "oss:") {
 		newName := fileName + "-" + t
 		return newName, true
 	}
