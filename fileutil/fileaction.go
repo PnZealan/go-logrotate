@@ -217,7 +217,7 @@ func osstransfer(fileName string, dest string) error {
 	ak := os.Getenv("AK")
 	aksecret := os.Getenv("AKSECRET")
 
-	dest = strings.Trim(dest, "oss:/")
+	dest = strings.Trim(dest, "oss://")
 	destslice := strings.Split(dest, "/")
 
 	bkname := destslice[0]
@@ -251,6 +251,7 @@ func osstransfer(fileName string, dest string) error {
 func destUtil(fileName string, dest string, t string) (string, bool) {
 	if strings.HasPrefix(fileName, "oss:"){
 		newName := fileName + "-" + t
+		log.Println(newName)
 		return newName, true
 	}
 	newName := path.Join(dest, path.Base(fileName)) + "-" + t
