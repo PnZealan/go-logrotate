@@ -11,18 +11,18 @@ function killProsess() {
 }
 
 function start() {
-        echo "start go-cron ..."
+        echo "start go-logrotate ..."
         `echo "====================================" >> ./cron.log`
-        `./logrotate &>> ./cron.log &`
+        `./go-logrotate &>> ./cron.log &`
 }
 
 function stop() {
         echo "stop go-logrotate ..."
-        killProsess "logrotate"
+        killProsess "go-logrotate"
 }
 
 function restart() {
-        echo "restart go-cron ..."
+        echo "restart go-logrotate ..."
         stop
         start
 }
@@ -38,8 +38,8 @@ case "$1" in
                 restart
                 ;;
         * )
-                echo "***********************"
+                echo "**********************"
                 echo "start | restart | stop"
-                echo "***********************"
+                echo "**********************"
                 ;;
 esac

@@ -221,7 +221,8 @@ func osstransfer(fileName string, dest string) error {
 	destslice := strings.Split(dest, "/")
 
 	bkname := destslice[0]
-	obname := path.Join(destslice[1:], path.Base(fileName))
+	
+	obname := path.Join(destslice[1], path.Base(fileName))
 
 	//get oss client instance
 	client, err := oss.New(endpoint, ak, aksecret)
