@@ -1,6 +1,8 @@
 #! /bin/bash
 # filename: run.sh
-
+export AK=""
+export AKSECRET=""
+export ENDPOINT=""
 function killProsess() {
         NAME=$1
 
