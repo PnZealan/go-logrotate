@@ -218,10 +218,10 @@ func osstransfer(fileName string, dest string) error {
 	aksecret := os.Getenv("AKSECRET")
 
 	dest = strings.Trim(dest, "oss://")
-	destslice := strings.Split(dest, "/")
+	destslice := strings.SplitN(dest, "/", 2)
 
 	bkname := destslice[0]
-	
+	//oss storage path
 	obname := path.Join(destslice[1], path.Base(fileName))
 
 	//get oss client instance
