@@ -3,7 +3,6 @@ package fileutil
 import (
 	"bufio"
 	"compress/gzip"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -11,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"strconv"
 	"strings"
 	"time"
 
@@ -220,7 +220,7 @@ func fileCopy(srcName string, destName string) error {
 }
 
 //param: ENDPOINT,AK,AKSECRET
-//oss://logs-td/server-log/  bkname, obname
+//oss://logs-td/server-log/test  bkname, obname
 func osstransfer(fileName string, dest string) error {
 	endpoint := os.Getenv("ENDPOINT")
 	ak := os.Getenv("AK")
@@ -229,9 +229,15 @@ func osstransfer(fileName string, dest string) error {
 	dest = strings.Trim(dest, "oss://")
 	destslice := strings.SplitN(dest, "/", 2)
 
+	//logs-td
 	bkname := destslice[0]
-	//oss storage path
-	obname := path.Join(destslice[1], path.Base(fileName))
+
+	//oss storage path, [1]:server-log/test
+	y := strconv.Itoa(time.Now().Year())
+	m := strconv.Itoa(int(time.Now().Month()))
+	d := strconv.Itoa(time.Now().Day())
+
+	obname := path.Join(destslice[1], path.Base(fileName), y, m, d)
 
 	//get oss client instance
 	client, err := oss.New(endpoint, ak, aksecret)
@@ -269,10 +275,15 @@ func destUtil(fileName string, dest string, t string) (string, bool) {
 
 }
 
+// TODO
+func dateToPath() {
+
+}
+
 func getIP() (ips []string) {
 	interfaceAddr, err := net.InterfaceAddrs()
 	if err != nil {
-		fmt.Printf("fail to get net interface addrs: %v", err)
+		log.Printf("fail to get net interface addrs: %v", err)
 		return ips
 	}
 
