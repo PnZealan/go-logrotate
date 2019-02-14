@@ -3,9 +3,11 @@ package fileutil
 import (
 	"bufio"
 	"compress/gzip"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
+	"net"
 	"os"
 	"os/exec"
 	"path"
@@ -17,7 +19,13 @@ import (
 
 // fileName is abs path !
 func fileCompress(fileName string) (string, error) {
-	cmpName := fileName + ".gz"
+	ips := getIP()
+	if ips != nil {
+		cmpName := fileName + "-" + ips[0] + "-.gz"
+	} else {
+		cmpName := fileName + ".gz"
+	}
+
 	// create compressed file
 	outputFile, err := os.Create(cmpName)
 	if err != nil {
@@ -258,4 +266,22 @@ func destUtil(fileName string, dest string, t string) (string, bool) {
 	newName := path.Join(dest, path.Base(fileName)) + "-" + t
 	return newName, false
 
+}
+
+func getIP() (ips []string) {
+	interfaceAddr, err := net.InterfaceAddrs()
+	if err != nil {
+		fmt.Printf("fail to get net interface addrs: %v", err)
+		return ips
+	}
+
+	for _, address := range interfaceAddr {
+		ipNet, isValidIPNet := address.(*net.IPNet)
+		if isValidIPNet && !ipNet.IP.IsLoopback() {
+			if ipNet.IP.To4() != nil {
+				ips = append(ips, ipNet.IP.String())
+			}
+		}
+	}
+	return ips
 }
