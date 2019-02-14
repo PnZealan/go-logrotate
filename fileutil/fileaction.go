@@ -237,7 +237,7 @@ func osstransfer(fileName string, dest string) error {
 	m := strconv.Itoa(int(time.Now().Month()))
 	d := strconv.Itoa(time.Now().Day())
 
-	obname := path.Join(destslice[1], path.Base(fileName), y, m, d)
+	obname := path.Join(destslice[1], y, m, d, path.Base(fileName))
 
 	//get oss client instance
 	client, err := oss.New(endpoint, ak, aksecret)
