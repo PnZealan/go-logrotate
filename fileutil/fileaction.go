@@ -19,11 +19,12 @@ import (
 
 // fileName is abs path !
 func fileCompress(fileName string) (string, error) {
+	var cmpName string
 	ips := getIP()
 	if ips != nil {
-		cmpName := fileName + "-" + ips[0] + "-.gz"
+		cmpName = fileName + "-" + ips[0] + "-.gz"
 	} else {
-		cmpName := fileName + ".gz"
+		cmpName = fileName + ".gz"
 	}
 
 	// create compressed file
